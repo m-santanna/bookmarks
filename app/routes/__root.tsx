@@ -6,7 +6,9 @@ import {
   HeadContent,
   Scripts,
 } from '@tanstack/react-router'
-import appCss from '@/app/app.css?url'
+import appCss from '@/app/globals.css?url'
+import NotFound from '@/components/not-found'
+import DefaultCatchBoundary from '@/components/error'
 
 export const Route = createRootRoute({
   head: () => ({
@@ -19,7 +21,7 @@ export const Route = createRootRoute({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'TanStack Start Starter',
+        title: 'Bookmarks',
       },
     ],
     links: [
@@ -30,6 +32,14 @@ export const Route = createRootRoute({
     ],
   }),
   component: RootComponent,
+  notFoundComponent: NotFound,
+  errorComponent: (props) => {
+    return (
+      <RootDocument>
+        <DefaultCatchBoundary {...props} />
+      </RootDocument>
+    )
+  },
 })
 
 function RootComponent() {
