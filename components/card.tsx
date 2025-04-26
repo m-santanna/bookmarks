@@ -8,8 +8,12 @@ import { bookmarksAtom } from '@/lib/atoms'
 export function BookmarkCard(bookmark: Bookmark) {
   const setBookmarks = useSetAtom(bookmarksAtom)
   const handleDelete = () => {
-    setBookmarks((prev) => prev.filter((b) => b.url !== bookmark.url))
+    setBookmarks((prevState) => prevState.filter((b) => b.url !== bookmark.url))
   }
+  const url = bookmark.url.startsWith('https')
+    ? bookmark.url
+    : `https://${bookmark.url}`
+
   return (
     <div className="relative">
       <Button
@@ -19,15 +23,15 @@ export function BookmarkCard(bookmark: Bookmark) {
         <Trash className="size-5" />
       </Button>
       <Link
-        to={bookmark.url}
+        to={url}
         key={bookmark.name}
         target="_blank"
         className="flex flex-col border rounded-xl p-4 bg-secondary text-secondary-foreground hover:bg-primary/25 transition-colors duration-300"
       >
-        <h1 className="text-primary font-bold text-3xl text-center mb-4">
+        <h1 className="text-primary font-bold text-3xl text-center mb-4 truncate">
           {bookmark.name}
         </h1>
-        <p className="font-thin text-center">{bookmark.category}</p>
+        <p className="font-thin text-center truncate">{bookmark.category}</p>
         <p className="font-thin text-center truncate">{bookmark.url}</p>
       </Link>
     </div>

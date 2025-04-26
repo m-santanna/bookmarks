@@ -10,7 +10,6 @@ import appCss from '@/app/globals.css?url'
 import NotFound from '@/components/not-found'
 import DefaultCatchBoundary from '@/components/error'
 import { Provider } from 'jotai/react'
-import Navbar from '@/components/navbar'
 
 export const Route = createRootRoute({
   head: () => ({
@@ -59,10 +58,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
         <HeadContent />
       </head>
       <body className="bg-gradient-to-br from-background to-primary/20 min-h-screen">
-        <Provider>
-          <Navbar />
-          {children}
-        </Provider>
+        <Provider>{children}</Provider>
         <Scripts />
       </body>
     </html>
