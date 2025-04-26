@@ -83,3 +83,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+.animation {
+  @apply animate-in fade-in zoom-in duration-300;
+}

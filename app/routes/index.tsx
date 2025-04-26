@@ -1,11 +1,16 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { useAtomValue, useSetAtom } from 'jotai/react'
-import { bookmarksAtom, categoryAtom, isMacAtom } from '@/lib/atoms'
+import {
+  bookmarksAtom,
+  categoryAtom,
+  dialogOpenAtom,
+  isMacAtom,
+} from '@/lib/atoms'
 import { BookmarkCard } from '@/components/card'
 import { useEffect, useState } from 'react'
 import { Progress } from '@/components/ui/progress'
 import Sidebar from '@/components/sidebar'
-import Navbar from '@/components/navbar'
+import BookmarkDialog from '@/components/bookmark-dialog'
 
 export const Route = createFileRoute('/')({
   component: Home,
@@ -14,9 +19,9 @@ export const Route = createFileRoute('/')({
 function Home() {
   const [progress, setProgress] = useState(0)
   const setIsMacUser = useSetAtom(isMacAtom)
+  const setDialogOpen = useSetAtom(dialogOpenAtom)
   const bookmarks = useAtomValue(bookmarksAtom)
   const category = useAtomValue(categoryAtom)
-  const navigate = useNavigate()
 
   useEffect(() => {
     const isMac = navigator.userAgent.toLowerCase().includes('mac')
@@ -38,7 +43,7 @@ function Home() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'k' && (e.ctrlKey || e.metaKey)) {
         e.preventDefault()
-        navigate({ to: '/add' })
+        setDialogOpen((dialogOpen) => !dialogOpen)
       }
     }
     window.addEventListener('keydown', handleKeyDown)
@@ -47,34 +52,37 @@ function Home() {
 
   if (progress < 100) {
     return (
-      <div className="h-[calc(100vh-160px)] flex flex-col justify-center items-center">
+      <div className="h-screen flex flex-col justify-center items-center">
         <Progress value={progress} className="w-1/2" />
       </div>
     )
   }
-  return (
-    <>
-      <Navbar />
-      <div className="w-screen min-h-[calc(100vh-80px)] flex">
-        {bookmarks.length === 0 && (
-          <h1 className="text-3xl font-bold flex justify-center items-center w-full h-[calc(100vh-160px)]">
-            No bookmarks yet!
-          </h1>
-        )}
-        {bookmarks.length > 0 && (
-          <>
-            <Sidebar />
-            <div className="grid content-start grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full p-8">
-              {bookmarks.map(
-                (bookmark) =>
-                  (category === 'all' || bookmark.category === category) && (
-                    <BookmarkCard key={bookmark.name} {...bookmark} />
-                  ),
-              )}
-            </div>
-          </>
-        )}
+  if (bookmarks.length === 0) {
+    return (
+      <div className="w-screen min-h-screen flex">
+        <div className="flex flex-col justify-center items-center gap-6 w-full h-screen animation">
+          <h1 className="text-5xl font-bold text-center">No bookmarks yet!</h1>
+          <BookmarkDialog buttonClassName="h-12" />
+        </div>
       </div>
-    </>
+    )
+  }
+  return (
+    <div className="w-screen min-h-screen flex">
+      <Sidebar className="animation" />
+      <div className="w-full px-10 animation">
+        <div className="w-full flex justify-center items-center p-8">
+          <BookmarkDialog />
+        </div>
+        <div className="grid content-start grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {bookmarks.map(
+            (bookmark) =>
+              (category === 'all' || bookmark.category === category) && (
+                <BookmarkCard key={bookmark.name} {...bookmark} />
+              ),
+          )}
+        </div>
+      </div>
+    </div>
   )
 }
