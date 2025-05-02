@@ -10,6 +10,7 @@ import appCss from '@/app/globals.css?url'
 import NotFound from '@/components/not-found'
 import DefaultCatchBoundary from '@/components/error'
 import { Provider } from 'jotai/react'
+import { Toaster } from '@/components/ui/sonner'
 
 export const Route = createRootRoute({
   head: () => ({
@@ -89,7 +90,10 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
         <HeadContent />
       </head>
       <body className="bg-gradient-to-br from-background to-primary/20 min-h-screen">
-        <Provider>{children}</Provider>
+        <Provider>
+          <Toaster />
+          {children}
+        </Provider>
         <Scripts />
       </body>
     </html>

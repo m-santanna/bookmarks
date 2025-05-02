@@ -10,7 +10,8 @@ import { BookmarkCard } from '@/components/card'
 import { useEffect, useState } from 'react'
 import { Progress } from '@/components/ui/progress'
 import Sidebar from '@/components/sidebar'
-import BookmarkDialog from '@/components/bookmark-dialog'
+import AddBookmarkDialog from '@/components/add-bookmark-dialog'
+import ImportButton from '@/components/import-button'
 
 export const Route = createFileRoute('/')({
   component: Home,
@@ -62,7 +63,10 @@ function Home() {
       <div className="w-screen min-h-screen flex">
         <div className="flex flex-col justify-center items-center gap-6 w-full h-screen animation">
           <h1 className="text-5xl font-bold text-center">No bookmarks yet!</h1>
-          <BookmarkDialog buttonClassName="h-12" />
+          <div className="flex gap-4 w-full justify-center items-center">
+            <AddBookmarkDialog buttonClassName="h-12" />
+            <ImportButton className="h-12" />
+          </div>
         </div>
       </div>
     )
@@ -72,7 +76,7 @@ function Home() {
       <Sidebar className="animation" />
       <div className="w-full px-10 animation">
         <div className="w-full flex justify-center items-center p-8">
-          <BookmarkDialog />
+          <AddBookmarkDialog />
         </div>
         <div className="grid content-start grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {bookmarks.map(

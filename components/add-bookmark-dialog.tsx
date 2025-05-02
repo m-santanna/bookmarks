@@ -12,6 +12,8 @@ import { useAtomValue, useAtom, useSetAtom } from 'jotai/react'
 import { isMacAtom, dialogOpenAtom, bookmarksAtom } from '@/lib/atoms'
 import { CommandIcon } from 'lucide-react'
 import { KeyboardEvent } from 'react'
+import { bookmarkSchema } from '@/lib/utils'
+import { toast } from 'sonner'
 
 export default function BookmarkDialog({
   buttonClassName,
@@ -30,19 +32,30 @@ export default function BookmarkDialog({
   }
 
   function handleSubmit() {
-    setBookmarks((prev) => [
-      ...prev,
-      {
-        name: (document.querySelector('input[name="name"]') as HTMLInputElement)
-          .value,
-        url: (document.querySelector('input[name="url"]') as HTMLInputElement)
-          .value,
-        category: (
-          document.querySelector('input[name="category"]') as HTMLInputElement
-        ).value,
-      },
-    ])
-    setDialogOpen(false)
+    const rawData = {
+      name: (document.querySelector('input[name="name"]') as HTMLInputElement)
+        .value,
+      url: (document.querySelector('input[name="url"]') as HTMLInputElement)
+        .value,
+      category: (
+        document.querySelector('input[name="category"]') as HTMLInputElement
+      ).value,
+    }
+    try {
+      const validatedData = bookmarkSchema.parse(rawData)
+      setBookmarks((prev) => [...prev, validatedData])
+      setDialogOpen(false)
+    } catch (error) {
+      console.error('Validation failed:', error)
+      toast.error('Invalid bookmark data', {
+        description:
+          'All fields must be written, and the URL must start with https://',
+        action: {
+          label: 'Close',
+          onClick: () => toast.dismiss(),
+        },
+      })
+    }
   }
 
   return (
@@ -88,7 +101,9 @@ export default function BookmarkDialog({
           />
         </div>
         <DialogFooter>
-          <Button onClick={handleSubmit}>Add Bookmark</Button>
+          <Button onClick={handleSubmit} className="text-sm">
+            Add Bookmark
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
